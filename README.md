@@ -1,6 +1,5 @@
 # Labori
-Destitutus ventis, remos adhibe. Resource Bank's sentient robot helper.
-
+Destitutus ventis, remos adhibe. Resource Bank's sentient robot helper. Get's a Slack file and uploads it to s3 bucket and then creates an Airtable record.
 ## How to Run
 - Add the following variables in the `.env` file
     - `SLACK_BOT_TOKEN`
