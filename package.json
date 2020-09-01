@@ -28,6 +28,7 @@
   },
   "homepage": "https://github.com/sarthakmohantyinc/Labori#readme",
   "dependencies": {
+    "lodash": ">=4.17.19",
     "@slack/bolt": "^2.3.0",
     "airtable": "^0.9.0",
     "aws-sdk": "^2.743.0",
