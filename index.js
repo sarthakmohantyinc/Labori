@@ -1,13 +1,16 @@
 require('dotenv').config()
 const axios = require('axios').default;
 const AWS = require('aws-sdk');
-const fs = require('fs');
 var s3 = new AWS.S3({
     apiVersion: '2006-03-01',
     region: 'us-east-2',
-    accessKeyId: process.env.ACCESS_KEY_ID,
+    accessKeyId: process.env.AWS_ACCESS_KEY_ID,
     secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY
 });
+const Airtable = require('airtable');
+var base = new Airtable({
+    apiKey: process.env.AIRTABLE_API_KEY
+}).base('app2TjIwSVuQpw4nK');
 
 const {
     App
@@ -26,37 +29,116 @@ app.message(/.*/, async ({
         // Download File :)
         // return public link
         await app.client.files.sharedPublicURL({
-            token: process.env.SLACK_TOKEN,
-            file: message.files[0].id
-        }).then((res) => {
-            var file = fs.readFile(res.file.permalink_public, function (err, data) {
-                if (err) throw err;
+                token: process.env.SLACK_TOKEN,
+                file: message.files[0].id
+            }).then((res) => {
+                console.log(res);
+                const slackUrlRegex = RegExp(/(?:https:\/\/slack\-files\.com)\/(.+)\-(.+)\-(.+)/i);
+                const slackFileLink = slackUrlRegex.exec(res.file.permalink_public);
+                const slackTeamId = slackFileLink[1];
+                const slackFileId = slackFileLink[2];
+                const slackFilePubSecret = slackFileLink[3];
+                const slackFileName = res.file.name.toLowerCase().replace(/[|&;$%@"<>()*^+,\s]/g, "_");
+                const pubLink = `https://files.slack.com/files-pri/${slackTeamId}-${slackFileId}/${slackFileName}?pub_secret=${slackFilePubSecret}`
+                axios.get(pubLink, {
+                        responseType: 'arraybuffer'
+                    })
+                    .then((buffer) => {
+                        console.log(buffer.data);
+                        if (!res.file.mimetype.length === 0) {
+                            var params = {
+                                Bucket: "sarthakcdn",
+                                Body: buffer.data,
+                                Key: "secured/Uploads/" + res.file.name,
+                                ContentType: res.file.mimetype
+                            };
+                        } else {
+                            if (res.file.name.split('.').pop() === 'pdf') {
+                                var params = {
+                                    Bucket: "sarthakcdn",
+                                    Body: buffer.data,
+                                    Key: "secured/Uploads/" + res.file.name,
+                                    ContentType: 'application/pdf'
+                                };
+                            } else if (res.file.name.split('.').pop() === 'png') {
+                                var params = {
+                                    Bucket: "sarthakcdn",
+                                    Body: buffer.data,
+                                    Key: "secured/Uploads/" + res.file.name,
+                                    ContentType: 'image/png'
+                                };
+                            } else if (res.file.name.split('.').pop() === 'doc') {
+                                var params = {
+                                    Bucket: "sarthakcdn",
+                                    Body: buffer.data,
+                                    Key: "secured/Uploads/" + res.file.name,
+                                    ContentType: 'application/msword'
+                                };
+                            } else if (res.file.name.split('.').pop() === 'docx') {
+                                var params = {
+                                    Bucket: "sarthakcdn",
+                                    Body: buffer.data,
+                                    Key: "secured/Uploads/" + res.file.name,
+                                    ContentType: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'
+                                };
+                            } else if (res.file.name.split('.').pop() === 'epub') {
+                                var params = {
+                                    Bucket: "sarthakcdn",
+                                    Body: buffer.data,
+                                    Key: "secured/Uploads/" + res.file.name,
+                                    ContentType: 'application/epub+zip'
+                                };
+                            } else if (res.file.name.split('.').pop() === 'html') {
+                                var params = {
+                                    Bucket: "sarthakcdn",
+                                    Body: buffer.data,
+                                    Key: "secured/Uploads/" + res.file.name,
+                                    ContentType: 'text/html'
+                                };
+                            } else {
 
-                console.log(data);
+                            }
+                        }
+
+                        console.log("secured/Uploads/" + res.file.name);
+                        s3.putObject(params, function (err, data) {
+                            if (err) {
+                                console.log(err, err.stack)
+                            } else {
+                                console.log(data)
+                            };
+                        });
+                        app.client.chat.postMessage({
+                            token: process.env.SLACK_BOT_TOKEN,
+                            channel: message.channel,
+                            thread_ts: message.ts,
+                            text: 'Here\'s yo\' file link: https://cdn.sarthakmohanty.me/secured/Uploads/' + encodeURI(res.file.name)
+                        });
+                        app.client.reactions.add({
+                            token: process.env.SLACK_BOT_TOKEN,
+                            channel: message.channel,
+                            name: 'white_check_mark',
+                            timestamp: message.ts
+                        });
+                        base('Resource List').create({
+                            "name": res.file.name.substring(0, res.file.name.indexOf('.')),
+                            "subject": "Not Categorized",
+                            "link": "https://cdn.sarthakmohanty.me/secured/Uploads/" + encodeURI(res.file.name),
+                            "contributor": res.file.user,
+                            "icon": "fas fa-star"
+                        }, function (err, record) {
+                            if (err) {
+                                console.error(err);
+                                return;
+                            }
+                        });
+                    }).catch((err) => {
+                        console.log(err);
+                    });
+            })
+            .catch((err) => {
+                console.log(err);
             });
-            var params = {
-                Bucket: "sarthakcdn",
-                Body: new Buffer(),
-                Key: "secured/Uploads/" + res.file.name,
-                ContentType: res.file.mimetype
-            };
-            console.log("secured/Uploads/" + res.file.name);
-            s3.putObject(params, function (err, data) {
-                if (err) {
-                    console.log(err, err.stack)
-                } else {
-                    console.log(data)
-                };
-            });
-            app.client.chat.postMessage({
-                token: process.env.SLACK_BOT_TOKEN,
-                channel: message.channel,
-                thread_ts: message.ts,
-                text: 'Here\'s yo\' file link: https://cdn.sarthakmohanty.me/secured/Uploads/' + encodeURI(res.file.name)
-            });
-        }).catch((err) => {
-            console.log(err);
-        });
     } else {
         await app.client.chat.delete({
             token: process.env.SLACK_TOKEN,
