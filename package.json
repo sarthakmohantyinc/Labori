@@ -1,0 +1,38 @@
+{
+  "name": "labori",
+  "version": "0.0.0",
+  "description": "a slack bot to upload files to s3 and airtable",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/sarthakmohantyinc/Labori.git"
+  },
+  "keywords": [
+    "s3",
+    "upload",
+    "bot",
+    "slack",
+    "slack-bot",
+    "airtable",
+    "slackbots",
+    "slackbots.js"
+  ],
+  "author": "Sarthak Mohanty",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/sarthakmohantyinc/Labori/issues"
+  },
+  "homepage": "https://github.com/sarthakmohantyinc/Labori#readme",
+  "dependencies": {
+    "@slack/bolt": "^2.3.0",
+    "aws-sdk": "^2.743.0",
+    "axios": "^0.20.0",
+    "dotenv": "^8.2.0",
+    "fs": "0.0.1-security",
+    "random-useragent": "^0.4.0"
+  }
+}
