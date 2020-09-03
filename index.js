@@ -96,26 +96,7 @@ app.message(/.*/, async ({
                                     ContentType: 'text/html'
                                 };
                             } else {
-                                app.client.reactions.add({
-                                    token: process.env.SLACK_BOT_TOKEN,
-                                    channel: message.channel,
-                                    name: 'broken_heart',
-                                    timestamp: message.ts,
-                                    unfurl_media: false,
-                                    as_user: false,
-                                    username: 'Your Ex :)',
-                                    icon_emoji: ':broken_heart:'
-                                });
-                                app.client.chat.postMessage({
-                                    token: process.env.SLACK_BOT_TOKEN,
-                                    channel: message.channel,
-                                    thread_ts: message.ts,
-                                    text: 'Could\'nt parse file type.',
-                                    unfurl_media: false,
-                                    as_user: false,
-                                    username: 'Your Ex :)',
-                                    icon_emoji: ':broken_heart:'
-                                });
+
                             }
                         }
 
@@ -131,21 +112,7 @@ app.message(/.*/, async ({
                             token: process.env.SLACK_BOT_TOKEN,
                             channel: message.channel,
                             thread_ts: message.ts,
-                            text: 'Here\'s yo\' (private) file link: https://cdn.sarthakmohanty.me/secured/Uploads/' + encodeURI(res.file.name),
-                            unfurl_media: false,
-                            as_user: false,
-                            username: 'Sheep :)',
-                            icon_emoji: ':sheep:'
-                        });
-                        app.client.chat.postMessage({
-                            token: process.env.SLACK_BOT_TOKEN,
-                            channel: message.channel,
-                            thread_ts: message.ts,
-                            text: 'Here\'s yo\' (public) file link: ' + pubLink + '\n change it manually in Airtable if needed.',
-                            unfurl_media: false,
-                            as_user: false,
-                            username: 'Goat :)',
-                            icon_emoji: ':goat:'
+                            text: 'Here\'s yo\' file link: https://cdn.sarthakmohanty.me/secured/Uploads/' + encodeURI(res.file.name) + '\n here\'s yo\' public link: ' + pubLink
                         });
                         app.client.reactions.add({
                             token: process.env.SLACK_BOT_TOKEN,
@@ -167,60 +134,10 @@ app.message(/.*/, async ({
                         });
                     }).catch((err) => {
                         console.log(err);
-                        app.client.reactions.add({
-                            token: process.env.SLACK_BOT_TOKEN,
-                            channel: message.channel,
-                            name: 'warning',
-                            timestamp: message.ts,
-                            unfurl_media: false,
-                            as_user: false,
-                            username: 'the construction workers on 1604',
-                            icon_emoji: ':warning:'
-                        });
-                        app.client.reactions.add({
-                            token: process.env.SLACK_BOT_TOKEN,
-                            channel: message.channel,
-                            name: 'no_entry',
-                            timestamp: message.ts,
-                            unfurl_media: false,
-                            as_user: false,
-                            username: 'the construction workers on 1604',
-                            icon_emoji: ':warning:'
-                        });
-                        app.client.chat.postMessage({
-                            token: process.env.SLACK_BOT_TOKEN,
-                            channel: message.channel,
-                            thread_ts: message.ts,
-                            text: 'welp. looks like axios failed to fetch the file. <@U015MNHKTMX> fix us, 1604 is getting clogged.',
-                            unfurl_media: false,
-                            as_user: false,
-                            username: 'the construction workers on 1604',
-                            icon_emoji: ':no_entry:'
-                        });
                     });
             })
             .catch((err) => {
                 console.log(err);
-                app.client.reactions.add({
-                    token: process.env.SLACK_BOT_TOKEN,
-                    channel: message.channel,
-                    name: 'no_entry',
-                    timestamp: message.ts,
-                    unfurl_media: false,
-                    as_user: false,
-                    username: 'the construction workers on 1604',
-                    icon_emoji: ':no_entry:'
-                });
-                app.client.chat.postMessage({
-                    token: process.env.SLACK_BOT_TOKEN,
-                    channel: message.channel,
-                    thread_ts: message.ts,
-                    text: 'file couldn\'t turn public. is it a duplicate name? usually, upload with a different name and it should work.',
-                    unfurl_media: false,
-                    as_user: false,
-                    username: 'the construction workers on 1604',
-                    icon_emoji: ':no_entry:'
-                });
             });
     } else {
         await app.client.chat.delete({
@@ -229,16 +146,6 @@ app.message(/.*/, async ({
             ts: message.ts
         }).catch((err) => {
             console.log(err);
-            app.client.reactions.add({
-                token: process.env.SLACK_BOT_TOKEN,
-                channel: message.channel,
-                name: 'no_entry',
-                timestamp: message.ts,
-                unfurl_media: false,
-                as_user: false,
-                username: 'the construction workers on 1604',
-                icon_emoji: ':no_entry:'
-            });
         });
     }
 });
