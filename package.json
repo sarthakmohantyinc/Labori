@@ -1,6 +1,6 @@
 {
   "name": "labori",
-  "version": "0.0.0",
+  "version": "1.0.0",
   "description": "a slack bot to upload files to s3 and airtable",
   "main": "index.js",
   "scripts": {
@@ -19,7 +19,10 @@
     "slack-bot",
     "airtable",
     "slackbots",
-    "slackbots.js"
+    "bolt",
+    "slackbolt",
+    "slack-bolt",
+    "bolt.js"
   ],
   "author": "Sarthak Mohanty",
   "license": "MIT",
@@ -32,7 +35,6 @@
     "airtable": "^0.9.0",
     "aws-sdk": "^2.743.0",
     "axios": "^0.20.0",
-    "dotenv": "^8.2.0",
-    "lodash": "^4.17.20"
+    "dotenv": "^8.2.0"
   }
 }
