@@ -168,145 +168,153 @@ app.message(/.*/, async ({
             });
     } else if (message.subtype === 'file_share' && message.channel === 'C0157NF6T3P') {
         await app.client.files.sharedPublicURL({
-            token: process.env.SLACK_TOKEN,
-            file: message.files[0].id
-        }).then((res) => {
-            const slackUrlRegex = RegExp(/(?:https:\/\/slack\-files\.com)\/(.+)\-(.+)\-(.+)/i);
-            const slackFileLink = slackUrlRegex.exec(res.file.permalink_public);
-            const slackTeamId = slackFileLink[1];
-            const slackFileId = slackFileLink[2];
-            const slackFilePubSecret = slackFileLink[3];
-            const slackFileName = res.file.name.toLowerCase().replace(/[|&;$%@"<>#!'()*^+,\s]/g, "_");
-            const pubLink = `https://files.slack.com/files-pri/${slackTeamId}-${slackFileId}/${slackFileName}?pub_secret=${slackFilePubSecret}`
-            axios.get(pubLink, {
-                    responseType: 'arraybuffer'
-                })
-                .then((buffer) => {
-                    if (res.file.mimetype.length !== 0) {
-                        var params = {
-                            Bucket: "sarthakmohanty",
-                            Body: buffer.data,
-                            Key: "Uploads/" + res.file.name,
-                            ContentType: res.file.mimetype
-                        };
-                    } else {
-                        if (res.file.name.split('.').pop() === 'pdf') {
+                token: process.env.SLACK_TOKEN,
+                file: message.files[0].id
+            }).then((res) => {
+                const slackUrlRegex = RegExp(/(?:https:\/\/slack\-files\.com)\/(.+)\-(.+)\-(.+)/i);
+                const slackFileLink = slackUrlRegex.exec(res.file.permalink_public);
+                const slackTeamId = slackFileLink[1];
+                const slackFileId = slackFileLink[2];
+                const slackFilePubSecret = slackFileLink[3];
+                const slackFileName = res.file.name.toLowerCase().replace(/[|&;$%@"<>#!'()*^+,\s]/g, "_");
+                const pubLink = `https://files.slack.com/files-pri/${slackTeamId}-${slackFileId}/${slackFileName}?pub_secret=${slackFilePubSecret}`
+                axios.get(pubLink, {
+                        responseType: 'arraybuffer'
+                    })
+                    .then((buffer) => {
+                        if (res.file.mimetype.length !== 0) {
                             var params = {
                                 Bucket: "sarthakmohanty",
                                 Body: buffer.data,
                                 Key: "Uploads/" + res.file.name,
-                                ContentType: 'application/pdf'
-                            };
-                        } else if (res.file.name.split('.').pop() === 'png') {
-                            var params = {
-                                Bucket: "sarthakmohanty",
-                                Body: buffer.data,
-                                Key: "Uploads/" + res.file.name,
-                                ContentType: 'image/png'
-                            };
-                        } else if (res.file.name.split('.').pop() === 'jpg') {
-                            var params = {
-                                Bucket: "sarthakmohanty",
-                                Body: buffer.data,
-                                Key: "Uploads/" + res.file.name,
-                                ContentType: 'image/jpeg'
-                            };
-                        } else if (res.file.name.split('.').pop() === 'doc') {
-                            var params = {
-                                Bucket: "sarthakmohanty",
-                                Body: buffer.data,
-                                Key: "Uploads/" + res.file.name,
-                                ContentType: 'application/msword'
-                            };
-                        } else if (res.file.name.split('.').pop() === 'docx') {
-                            var params = {
-                                Bucket: "sarthakmohanty",
-                                Body: buffer.data,
-                                Key: "Uploads/" + res.file.name,
-                                ContentType: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'
-                            };
-                        } else if (res.file.name.split('.').pop() === 'epub') {
-                            var params = {
-                                Bucket: "sarthakmohanty",
-                                Body: buffer.data,
-                                Key: "Uploads/" + res.file.name,
-                                ContentType: 'application/epub+zip'
-                            };
-                        } else if (res.file.name.split('.').pop() === 'html') {
-                            var params = {
-                                Bucket: "sarthakmohanty",
-                                Body: buffer.data,
-                                Key: "Uploads/" + res.file.name,
-                                ContentType: 'text/html'
+                                ContentType: res.file.mimetype,
+                                ACL: public - read
                             };
                         } else {
-                            app.client.chat.postMessage({
-                                token: process.env.SLACK_BOT_TOKEN,
-                                channel: message.channel,
-                                thread_ts: message.ts,
-                                text: 'Couldn\'t detect MIMETYPE. give me :banana:',
-                                username: 'the monkeys at the temples in india',
-                                icon_emoji: ':monkey_face:',
-                            });
+                            if (res.file.name.split('.').pop() === 'pdf') {
+                                var params = {
+                                    Bucket: "sarthakmohanty",
+                                    Body: buffer.data,
+                                    Key: "Uploads/" + res.file.name,
+                                    ContentType: 'application/pdf',
+                                    ACL: public - read
+                                };
+                            } else if (res.file.name.split('.').pop() === 'png') {
+                                var params = {
+                                    Bucket: "sarthakmohanty",
+                                    Body: buffer.data,
+                                    Key: "Uploads/" + res.file.name,
+                                    ContentType: 'image/png',
+                                    ACL: public - read
+                                };
+                            } else if (res.file.name.split('.').pop() === 'jpg') {
+                                var params = {
+                                    Bucket: "sarthakmohanty",
+                                    Body: buffer.data,
+                                    Key: "Uploads/" + res.file.name,
+                                    ContentType: 'image/jpeg',
+                                    ACL: public - read
+                                };
+                            } else if (res.file.name.split('.').pop() === 'doc') {
+                                var params = {
+                                    Bucket: "sarthakmohanty",
+                                    Body: buffer.data,
+                                    Key: "Uploads/" + res.file.name,
+                                    ContentType: 'application/msword',
+                                    ACL: public - read
+                                };
+                            } else if (res.file.name.split('.').pop() === 'docx') {
+                                var params = {
+                                    Bucket: "sarthakmohanty",
+                                    Body: buffer.data,
+                                    Key: "Uploads/" + res.file.name,
+                                    ContentType: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+                                    ACL: public - read
+                                };
+                            } else if (res.file.name.split('.').pop() === 'epub') {
+                                var params = {
+                                    Bucket: "sarthakmohanty",
+                                    Body: buffer.data,
+                                    Key: "Uploads/" + res.file.name,
+                                    ContentType: 'application/epub+zip',
+                                    ACL: public - read
+                                };
+                            } else if (res.file.name.split('.').pop() === 'html') {
+                                var params = {
+                                    Bucket: "sarthakmohanty",
+                                    Body: buffer.data,
+                                    Key: "Uploads/" + res.file.name,
+                                    ContentType: 'text/html',
+                                    ACL: public - read
+                                };
+                            } else {
+                                app.client.chat.postMessage({
+                                    token: process.env.SLACK_BOT_TOKEN,
+                                    channel: message.channel,
+                                    thread_ts: message.ts,
+                                    text: 'Couldn\'t detect MIMETYPE. give me :banana:',
+                                    username: 'the monkeys at the temples in india',
+                                    icon_emoji: ':monkey_face:',
+                                });
+                            }
                         }
-                    }
-                    s3.putObject(params, function (err, data) {
-                        if (err) {
-                            console.log(err, err.stack)
-                        } else {
-                            console.log(data)
-                        };
+                        s3.putObject(params, function (err, data) {
+                            if (err) {
+                                console.log(err, err.stack)
+                            } else {
+                                console.log(data)
+                            };
+                        });
+                        app.client.chat.postMessage({
+                            token: process.env.SLACK_BOT_TOKEN,
+                            channel: message.channel,
+                            thread_ts: message.ts,
+                            text: 'Here\'s yo\' normal public (faster) file link: https://sarthakmohanty.s3.amazonaws.com/Uploads/' + encodeURI(res.file.name) + '\n here\'s yo\' slack public link: ' + pubLink,
+                            unfurl_media: false,
+                            username: 'Mrs. Westbrook',
+                            icon_emoji: ':goat:',
+                        });
+                        app.client.reactions.add({
+                            token: process.env.SLACK_BOT_TOKEN,
+                            channel: message.channel,
+                            name: 'white_check_mark',
+                            timestamp: message.ts,
+                        });
+                        base('Resource List').create({
+                            "name": res.file.name.substring(0, res.file.name.indexOf('.')),
+                            "subject": "Not Categorized",
+                            "link": "https://sarthakmohanty.s3.amazonaws.com/Uploads/" + encodeURI(res.file.name),
+                            "contributor": res.file.user,
+                            "icon": "fas fa-file"
+                        }, function (err, record) {
+                            if (err) {
+                                console.error(err);
+                                return;
+                            }
+                        });
+                    }).catch((err) => {
+                        console.log(err);
+                        app.client.chat.postMessage({
+                            token: process.env.SLACK_BOT_TOKEN,
+                            channel: message.channel,
+                            thread_ts: message.ts,
+                            text: 'axios had fun failing. looks like `' + err.response.status + ' ' + err.response.statusText + '` which probably means you had some unescaped special characters. <@U015MNHKTMX> fix this. :crab: :crab: :crab: :crab:.',
+                            username: 'the crabs on the beach',
+                            icon_emoji: ':crab:',
+                        });
                     });
-                    app.client.chat.postMessage({
-                        token: process.env.SLACK_BOT_TOKEN,
-                        channel: message.channel,
-                        thread_ts: message.ts,
-                        text: 'Here\'s yo\' normal public (faster) file link: https://sarthakmohanty.s3.amazonaws.com/Uploads/' + encodeURI(res.file.name) + '\n here\'s yo\' slack public link: ' + pubLink,
-                        unfurl_media: false,
-                        username: 'Mrs. Westbrook',
-                        icon_emoji: ':goat:',
-                    });
-                    app.client.reactions.add({
-                        token: process.env.SLACK_BOT_TOKEN,
-                        channel: message.channel,
-                        name: 'white_check_mark',
-                        timestamp: message.ts,
-                    });
-                    base('Resource List').create({
-                        "name": res.file.name.substring(0, res.file.name.indexOf('.')),
-                        "subject": "Not Categorized",
-                        "link": "https://sarthakmohanty.s3.amazonaws.com/Uploads/" + encodeURI(res.file.name),
-                        "contributor": res.file.user,
-                        "icon": "fas fa-file"
-                    }, function (err, record) {
-                        if (err) {
-                            console.error(err);
-                            return;
-                        }
-                    });
-                }).catch((err) => {
-                    console.log(err);
-                    app.client.chat.postMessage({
-                        token: process.env.SLACK_BOT_TOKEN,
-                        channel: message.channel,
-                        thread_ts: message.ts,
-                        text: 'axios had fun failing. looks like `' + err.response.status + ' ' + err.response.statusText + '` which probably means you had some unescaped special characters. <@U015MNHKTMX> fix this. :crab: :crab: :crab: :crab:.',
-                        username: 'the crabs on the beach',
-                        icon_emoji: ':crab:',
-                    });
+            })
+            .catch((err) => {
+                console.log(err);
+                app.client.chat.postMessage({
+                    token: process.env.SLACK_BOT_TOKEN,
+                    channel: message.channel,
+                    thread_ts: message.ts,
+                    text: 'Failed to make yo\' file public. ERR: `' + err.data.error + '` now keep moving :car:, keep moving I said!',
+                    username: 'the construction workers on i-10',
+                    icon_emoji: ':cyclone:',
                 });
-        })
-        .catch((err) => {
-            console.log(err);
-            app.client.chat.postMessage({
-                token: process.env.SLACK_BOT_TOKEN,
-                channel: message.channel,
-                thread_ts: message.ts,
-                text: 'Failed to make yo\' file public. ERR: `' + err.data.error + '` now keep moving :car:, keep moving I said!',
-                username: 'the construction workers on i-10',
-                icon_emoji: ':cyclone:',
             });
-        });
     } else {
         await app.client.chat.delete({
             token: process.env.SLACK_TOKEN,
