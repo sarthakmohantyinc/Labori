@@ -32,7 +32,6 @@ app.message(/.*/, async ({
                 token: process.env.SLACK_TOKEN,
                 file: message.files[0].id
             }).then((res) => {
-                console.log(res);
                 const slackUrlRegex = RegExp(/(?:https:\/\/slack\-files\.com)\/(.+)\-(.+)\-(.+)/i);
                 const slackFileLink = slackUrlRegex.exec(res.file.permalink_public);
                 const slackTeamId = slackFileLink[1];
@@ -45,7 +44,7 @@ app.message(/.*/, async ({
                     })
                     .then((buffer) => {
                         console.log(buffer.data);
-                        if (!res.file.mimetype.length === 0) {
+                        if (res.file.mimetype.length !== 0) {
                             var params = {
                                 Bucket: "sarthakcdn",
                                 Body: buffer.data,
@@ -103,7 +102,12 @@ app.message(/.*/, async ({
                                     ContentType: 'text/html'
                                 };
                             } else {
-
+                                app.client.chat.postMessage({
+                                    token: process.env.SLACK_BOT_TOKEN,
+                                    channel: message.channel,
+                                    thread_ts: message.ts,
+                                    text: 'Couldn\'t detect MIMETYPE.'
+                                });
                             }
                         }
 
@@ -115,13 +119,13 @@ app.message(/.*/, async ({
                                 console.log(data)
                             };
                         });
-                        app.client.chat.postMessage({
+                        await app.client.chat.postMessage({
                             token: process.env.SLACK_BOT_TOKEN,
                             channel: message.channel,
                             thread_ts: message.ts,
                             text: 'Here\'s yo\' file link: https://cdn.sarthakmohanty.me/secured/Uploads/' + encodeURI(res.file.name) + '\n here\'s yo\' public link: ' + pubLink
                         });
-                        app.client.reactions.add({
+                        await app.client.reactions.add({
                             token: process.env.SLACK_BOT_TOKEN,
                             channel: message.channel,
                             name: 'white_check_mark',
@@ -141,10 +145,22 @@ app.message(/.*/, async ({
                         });
                     }).catch((err) => {
                         console.log(err);
+                        await app.client.chat.postMessage({
+                            token: process.env.SLACK_BOT_TOKEN,
+                            channel: message.channel,
+                            thread_ts: message.ts,
+                            text: 'axios had fun failing. looks like ' + err.response.status + ' ' + err.response.statusText
+                        });
                     });
             })
             .catch((err) => {
                 console.log(err);
+                await app.client.chat.postMessage({
+                    token: process.env.SLACK_BOT_TOKEN,
+                    channel: message.channel,
+                    thread_ts: message.ts,
+                    text: 'Failed to make yo\' file public. ERR: `' + err.data.error + '`'
+                });
             });
     } else {
         await app.client.chat.delete({
