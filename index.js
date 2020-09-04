@@ -37,13 +37,12 @@ app.message(/.*/, async ({
                 const slackTeamId = slackFileLink[1];
                 const slackFileId = slackFileLink[2];
                 const slackFilePubSecret = slackFileLink[3];
-                const slackFileName = res.file.name.toLowerCase().replace(/[|&;$%@"<>()*^+,\s]/g, "_");
+                const slackFileName = res.file.name.toLowerCase().replace(/[|&;$%@"<>#!'()*^+,\s]/g, "_");
                 const pubLink = `https://files.slack.com/files-pri/${slackTeamId}-${slackFileId}/${slackFileName}?pub_secret=${slackFilePubSecret}`
                 axios.get(pubLink, {
                         responseType: 'arraybuffer'
                     })
                     .then((buffer) => {
-                        console.log(buffer.data);
                         if (res.file.mimetype.length !== 0) {
                             var params = {
                                 Bucket: "sarthakcdn",
@@ -110,8 +109,6 @@ app.message(/.*/, async ({
                                 });
                             }
                         }
-
-                        console.log("secured/Uploads/" + res.file.name);
                         s3.putObject(params, function (err, data) {
                             if (err) {
                                 console.log(err, err.stack)
@@ -123,7 +120,11 @@ app.message(/.*/, async ({
                             token: process.env.SLACK_BOT_TOKEN,
                             channel: message.channel,
                             thread_ts: message.ts,
-                            text: 'Here\'s yo\' file link: https://cdn.sarthakmohanty.me/secured/Uploads/' + encodeURI(res.file.name) + '\n here\'s yo\' public link: ' + pubLink
+                            text: 'Here\'s yo\' file link: https://cdn.sarthakmohanty.me/secured/Uploads/' + encodeURI(res.file.name) + '\n here\'s yo\' public link: ' + pubLink,
+                            unfurl_media: false,
+                            as_user: false,
+                            username: 'Mrs. Westbrook',
+                            icon_emoji: ':goat:'
                         });
                         app.client.reactions.add({
                             token: process.env.SLACK_BOT_TOKEN,
@@ -149,7 +150,7 @@ app.message(/.*/, async ({
                             token: process.env.SLACK_BOT_TOKEN,
                             channel: message.channel,
                             thread_ts: message.ts,
-                            text: 'axios had fun failing. looks like ' + err.response.status + ' ' + err.response.statusText
+                            text: 'axios had fun failing. looks like `' + err.response.status + ' ' + err.response.statusText + '` which probably means you had some unescaped special characters. <@U015MNHKTMX> fix this.'
                         });
                     });
             })
