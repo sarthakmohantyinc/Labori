@@ -37,7 +37,7 @@ app.message(/.*/, async ({
                 const slackTeamId = slackFileLink[1];
                 const slackFileId = slackFileLink[2];
                 const slackFilePubSecret = slackFileLink[3];
-                const slackFileName = res.file.name.toLowerCase().replace(/[|&;$%@"<>#()*^+,\s]/g, "_");
+                const slackFileName = res.file.name.toLowerCase().replace(/[|&;$%@"<>()*^+,\s]/g, "_");
                 const pubLink = `https://files.slack.com/files-pri/${slackTeamId}-${slackFileId}/${slackFileName}?pub_secret=${slackFilePubSecret}`
                 axios.get(pubLink, {
                         responseType: 'arraybuffer'
