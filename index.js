@@ -25,7 +25,6 @@ app.message(/.*/, async ({
     message,
     say
 }) => {
-    console.log(message);
     if (message.subtype === 'file_share' && message.channel === 'C017CP00UHW') {
         await app.client.files.sharedPublicURL({
                 token: process.env.SLACK_TOKEN,
