@@ -119,13 +119,13 @@ app.message(/.*/, async ({
                                 console.log(data)
                             };
                         });
-                        await app.client.chat.postMessage({
+                        app.client.chat.postMessage({
                             token: process.env.SLACK_BOT_TOKEN,
                             channel: message.channel,
                             thread_ts: message.ts,
                             text: 'Here\'s yo\' file link: https://cdn.sarthakmohanty.me/secured/Uploads/' + encodeURI(res.file.name) + '\n here\'s yo\' public link: ' + pubLink
                         });
-                        await app.client.reactions.add({
+                        app.client.reactions.add({
                             token: process.env.SLACK_BOT_TOKEN,
                             channel: message.channel,
                             name: 'white_check_mark',
@@ -145,7 +145,7 @@ app.message(/.*/, async ({
                         });
                     }).catch((err) => {
                         console.log(err);
-                        await app.client.chat.postMessage({
+                        app.client.chat.postMessage({
                             token: process.env.SLACK_BOT_TOKEN,
                             channel: message.channel,
                             thread_ts: message.ts,
@@ -155,7 +155,7 @@ app.message(/.*/, async ({
             })
             .catch((err) => {
                 console.log(err);
-                await app.client.chat.postMessage({
+                app.client.chat.postMessage({
                     token: process.env.SLACK_BOT_TOKEN,
                     channel: message.channel,
                     thread_ts: message.ts,
