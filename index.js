@@ -38,7 +38,7 @@ app.message(/.*/, async ({
                 const slackTeamId = slackFileLink[1];
                 const slackFileId = slackFileLink[2];
                 const slackFilePubSecret = slackFileLink[3];
-                const slackFileName = res.file.name.toLowerCase().replace(/[|&;$%@"<>()*^+,\s]/g, "_");
+                const slackFileName = res.file.name.toLowerCase().replace(/[|&;$%@"<>#()*^+,\s]/g, "_");
                 const pubLink = `https://files.slack.com/files-pri/${slackTeamId}-${slackFileId}/${slackFileName}?pub_secret=${slackFilePubSecret}`
                 axios.get(pubLink, {
                         responseType: 'arraybuffer'
@@ -66,6 +66,13 @@ app.message(/.*/, async ({
                                     Body: buffer.data,
                                     Key: "secured/Uploads/" + res.file.name,
                                     ContentType: 'image/png'
+                                };
+                            } else if (res.file.name.split('.').pop() === 'jpg') {
+                                var params = {
+                                    Bucket: "sarthakcdn",
+                                    Body: buffer.data,
+                                    Key: "secured/Uploads/" + res.file.name,
+                                    ContentType: 'image/jpeg'
                                 };
                             } else if (res.file.name.split('.').pop() === 'doc') {
                                 var params = {
