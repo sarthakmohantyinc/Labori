@@ -122,7 +122,6 @@ app.message(/.*/, async ({
                             thread_ts: message.ts,
                             text: 'Here\'s yo\' file link: https://cdn.sarthakmohanty.me/secured/Uploads/' + encodeURI(res.file.name) + '\n here\'s yo\' public link: ' + pubLink,
                             unfurl_media: false,
-                            as_user: false,
                             username: 'Mrs. Westbrook',
                             icon_emoji: ':goat:'
                         });
