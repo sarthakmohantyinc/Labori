@@ -188,7 +188,7 @@ app.message(/.*/, async ({
                                 Body: buffer.data,
                                 Key: "Uploads/" + res.file.name,
                                 ContentType: res.file.mimetype,
-                                ACL: public - read
+                                ACL: "public-read",
                             };
                         } else {
                             if (res.file.name.split('.').pop() === 'pdf') {
@@ -197,7 +197,7 @@ app.message(/.*/, async ({
                                     Body: buffer.data,
                                     Key: "Uploads/" + res.file.name,
                                     ContentType: 'application/pdf',
-                                    ACL: public - read
+                                    ACL: "public-read",
                                 };
                             } else if (res.file.name.split('.').pop() === 'png') {
                                 var params = {
@@ -205,7 +205,7 @@ app.message(/.*/, async ({
                                     Body: buffer.data,
                                     Key: "Uploads/" + res.file.name,
                                     ContentType: 'image/png',
-                                    ACL: public - read
+                                    ACL: "public-read",
                                 };
                             } else if (res.file.name.split('.').pop() === 'jpg') {
                                 var params = {
@@ -213,7 +213,7 @@ app.message(/.*/, async ({
                                     Body: buffer.data,
                                     Key: "Uploads/" + res.file.name,
                                     ContentType: 'image/jpeg',
-                                    ACL: public - read
+                                    ACL: "public-read",
                                 };
                             } else if (res.file.name.split('.').pop() === 'doc') {
                                 var params = {
@@ -221,7 +221,7 @@ app.message(/.*/, async ({
                                     Body: buffer.data,
                                     Key: "Uploads/" + res.file.name,
                                     ContentType: 'application/msword',
-                                    ACL: public - read
+                                    ACL: "public-read",
                                 };
                             } else if (res.file.name.split('.').pop() === 'docx') {
                                 var params = {
@@ -229,7 +229,7 @@ app.message(/.*/, async ({
                                     Body: buffer.data,
                                     Key: "Uploads/" + res.file.name,
                                     ContentType: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
-                                    ACL: public - read
+                                    ACL: "public-read",
                                 };
                             } else if (res.file.name.split('.').pop() === 'epub') {
                                 var params = {
@@ -237,7 +237,7 @@ app.message(/.*/, async ({
                                     Body: buffer.data,
                                     Key: "Uploads/" + res.file.name,
                                     ContentType: 'application/epub+zip',
-                                    ACL: public - read
+                                    ACL: "public-read",
                                 };
                             } else if (res.file.name.split('.').pop() === 'html') {
                                 var params = {
@@ -245,7 +245,7 @@ app.message(/.*/, async ({
                                     Body: buffer.data,
                                     Key: "Uploads/" + res.file.name,
                                     ContentType: 'text/html',
-                                    ACL: public - read
+                                    ACL: "public-read",
                                 };
                             } else {
                                 app.client.chat.postMessage({
