@@ -26,8 +26,6 @@ app.message(/.*/, async ({
     say
 }) => {
     if (message.subtype === 'file_share') {
-        // Download File :)
-        // return public link
         await app.client.files.sharedPublicURL({
                 token: process.env.SLACK_TOKEN,
                 file: message.files[0].id
@@ -105,7 +103,9 @@ app.message(/.*/, async ({
                                     token: process.env.SLACK_BOT_TOKEN,
                                     channel: message.channel,
                                     thread_ts: message.ts,
-                                    text: 'Couldn\'t detect MIMETYPE.'
+                                    text: 'Couldn\'t detect MIMETYPE. give me :banana:',
+                                    username: 'the monkeys at the temples in india',
+                                    icon_emoji: ':monkey_face:',
                                 });
                             }
                         }
@@ -123,13 +123,13 @@ app.message(/.*/, async ({
                             text: 'Here\'s yo\' file link: https://cdn.sarthakmohanty.me/secured/Uploads/' + encodeURI(res.file.name) + '\n here\'s yo\' public link: ' + pubLink,
                             unfurl_media: false,
                             username: 'Mrs. Westbrook',
-                            icon_emoji: ':goat:'
+                            icon_emoji: ':goat:',
                         });
                         app.client.reactions.add({
                             token: process.env.SLACK_BOT_TOKEN,
                             channel: message.channel,
                             name: 'white_check_mark',
-                            timestamp: message.ts
+                            timestamp: message.ts,
                         });
                         base('Resource List').create({
                             "name": res.file.name.substring(0, res.file.name.indexOf('.')),
@@ -149,7 +149,9 @@ app.message(/.*/, async ({
                             token: process.env.SLACK_BOT_TOKEN,
                             channel: message.channel,
                             thread_ts: message.ts,
-                            text: 'axios had fun failing. looks like `' + err.response.status + ' ' + err.response.statusText + '` which probably means you had some unescaped special characters. <@U015MNHKTMX> fix this.'
+                            text: 'axios had fun failing. looks like `' + err.response.status + ' ' + err.response.statusText + '` which probably means you had some unescaped special characters. <@U015MNHKTMX> fix this. :crab: :crab: :crab: :crab:.',
+                            username: 'the crabs on the beach',
+                            icon_emoji: ':crab:',
                         });
                     });
             })
@@ -159,7 +161,9 @@ app.message(/.*/, async ({
                     token: process.env.SLACK_BOT_TOKEN,
                     channel: message.channel,
                     thread_ts: message.ts,
-                    text: 'Failed to make yo\' file public. ERR: `' + err.data.error + '`'
+                    text: 'Failed to make yo\' file public. ERR: `' + err.data.error + '` now keep moving :car:, keep moving I said!',
+                    username: 'the construction workers on i-10',
+                    icon_emoji: ':cyclone:',
                 });
             });
     } else {
