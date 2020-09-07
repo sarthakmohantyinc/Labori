@@ -316,7 +316,7 @@ app.message(/.*/, async ({
                     icon_emoji: ':cyclone:',
                 });
             });
-    } else if (message.type === 'message' && typeof message.ts !== 'undefined') {
+    } else if (typeof message.ts !== 'undefined') {
         await app.client.reactions.add({
             token: process.env.SLACK_BOT_TOKEN,
             channel: message.channel,
