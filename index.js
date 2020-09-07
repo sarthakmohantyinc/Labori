@@ -316,21 +316,23 @@ app.message(/.*/, async ({
                     icon_emoji: ':cyclone:',
                 });
             });
-    /*} else if (message.ts !== message.thread_ts) {
-        await app.client.reactions.add({
-            token: process.env.SLACK_BOT_TOKEN,
-            channel: message.channel,
-            name: 'white_check_mark',
-            timestamp: message.ts,
-        });*/
     } else {
-        await app.client.chat.delete({
-            token: process.env.SLACK_TOKEN,
-            channel: message.channel,
-            ts: message.ts
-        }).catch((err) => {
-            console.log(err);
-        });
+        if (typeof message.thread_ts === 'undefined') {
+            await app.client.chat.delete({
+                token: process.env.SLACK_TOKEN,
+                channel: message.channel,
+                ts: message.ts
+            }).catch((err) => {
+                console.log(err);
+            });
+        } else {
+            await app.client.reactions.add({
+                token: process.env.SLACK_BOT_TOKEN,
+                channel: message.channel,
+                name: 'white_check_mark',
+                timestamp: message.ts,
+            });
+        }
     }
 });
 
