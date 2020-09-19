@@ -472,7 +472,7 @@ app.message(/.*/, async ({
                 const pubLink = `https://files.slack.com/files-pri/${slackTeamId}-${slackFileId}/${slackFileName}?pub_secret=${slackFilePubSecret}`
                 markdownpdf({
                     cssPath: "https://stackedit.io/style.css"
-                }).from(pubLink).to("converted.pdf", function () {
+                }).from(pubLink).to("converted.pdf", async function () {
                     app.client.files.upload({
                         token: process.env.SLACK_BOT_TOKEN,
                         thread_ts: message.ts,
@@ -481,14 +481,6 @@ app.message(/.*/, async ({
                         filetype: 'pdf',
                     });
                     console.log(`Converted ${slackFileName} successfully!`)
-                });
-            } else {
-                await app.client.chat.delete({
-                    token: process.env.SLACK_TOKEN,
-                    channel: message.channel,
-                    ts: message.ts
-                }).catch((err) => {
-                    console.log(err);
                 });
             }
         })
