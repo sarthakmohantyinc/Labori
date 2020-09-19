@@ -476,15 +476,16 @@ app.message(/.*/, async ({
                     }).then((buffer) => {
                         markdownpdf({
                             cssPath: "https://stackedit.io/style.css"
-                        }).from(pubLink).to("converted.pdf", async function () {
+                        }).from(buffer).to("./temp/converted.pdf", async function () {
                             app.client.files.upload({
                                 token: process.env.SLACK_BOT_TOKEN,
                                 thread_ts: message.ts,
-                                file: fs.readFileSync(buffer),
+                                file: './temp/converted.pdf',
                                 filename: slackFileName.substring(0, s.indexOf('.')) + '.pdf',
                                 filetype: 'pdf',
                             });
-                            console.log(`Converted ${slackFileName} successfully!`)
+                            console.log(`Converted ${slackFileName} successfully!`);
+                            fs.unlink('./temp/converted.pdf');
                         });
                     });
                 }
