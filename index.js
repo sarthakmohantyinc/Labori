@@ -474,9 +474,12 @@ app.message(/.*/, async ({
                     axios.get(pubLink, {
                         responseType: 'arraybuffer'
                     }).then((buffer) => {
+                        console.log(buffer);
+                        console.log('---')
+                        console.log(Buffer.from(buffer));
                         markdownpdf({
                             cssPath: "https://stackedit.io/style.css"
-                        }).from(buffer).to("./temp/converted.pdf", async function () {
+                        }).from(Buffer.from(buffer)).to("./temp/converted.pdf", async function () {
                             app.client.files.upload({
                                 token: process.env.SLACK_BOT_TOKEN,
                                 thread_ts: message.ts,
@@ -485,7 +488,7 @@ app.message(/.*/, async ({
                                 filetype: 'pdf',
                             });
                             console.log(`Converted ${slackFileName} successfully!`);
-                            fs.unlink('./temp/converted.pdf');
+                            //fs.unlink('./temp/converted.pdf');
                         });
                     });
                 }
