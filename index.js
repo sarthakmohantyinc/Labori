@@ -1,7 +1,5 @@
 require('dotenv').config()
 const axios = require('axios').default;
-var markdownpdf = require("markdown-pdf");
-const fs = require('fs');
 const AWS = require('aws-sdk');
 var s3 = new AWS.S3({
     apiVersion: '2006-03-01',
@@ -28,7 +26,6 @@ app.message(/.*/, async ({
     say
 }) => {
     console.log(message);
-    // Private Upload
     if (message.subtype === 'file_share' && message.channel === 'C017CP00UHW') {
         await app.client.files.sharedPublicURL({
                 token: process.env.SLACK_TOKEN,
@@ -170,8 +167,7 @@ app.message(/.*/, async ({
                     icon_emoji: ':cyclone:',
                 });
             });
-    } // Public Upload
-    else if (message.subtype === 'file_share' && message.channel === 'C0157NF6T3P') {
+    } else if (message.subtype === 'file_share' && message.channel === 'C0157NF6T3P') {
         await app.client.files.sharedPublicURL({
                 token: process.env.SLACK_TOKEN,
                 file: message.files[0].id
@@ -320,8 +316,7 @@ app.message(/.*/, async ({
                     icon_emoji: ':cyclone:',
                 });
             });
-    } // CDN
-    else if (message.subtype === 'file_share' && message.channel === 'C01A1KXB8AJ') {
+    } else if (message.subtype === 'file_share' && message.channel === 'C01A1KXB8AJ') {
         await app.client.files.sharedPublicURL({
                 token: process.env.SLACK_TOKEN,
                 file: message.files[0].id
@@ -458,53 +453,7 @@ app.message(/.*/, async ({
                     icon_emoji: ':cyclone:',
                 });
             });
-    } else if (message.subtype === 'file_share' && message.channel === 'C01ATHB7C6S') {
-        await app.client.files.sharedPublicURL({
-                token: process.env.SLACK_TOKEN,
-                file: message.files[0].id
-            }).then((res) => {
-                if (res.file.name.split('.').pop() === 'md') {
-                    const slackUrlRegex = RegExp(/(?:https:\/\/slack\-files\.com)\/(.+)\-(.+)\-(.+)/i);
-                    const slackFileLink = slackUrlRegex.exec(res.file.permalink_public);
-                    const slackTeamId = slackFileLink[1];
-                    const slackFileId = slackFileLink[2];
-                    const slackFilePubSecret = slackFileLink[3];
-                    const slackFileName = res.file.name.toLowerCase().replace(/[|&;$%@"<>#!'()*^+,\s]/g, "_");
-                    const pubLink = `https://files.slack.com/files-pri/${slackTeamId}-${slackFileId}/${slackFileName}?pub_secret=${slackFilePubSecret}`
-                    axios.get(pubLink, {
-                        responseType: 'arraybuffer'
-                    }).then((buffer) => {
-                        markdownpdf({
-                            cssPath: "https://stackedit.io/style.css"
-                        }).from(buffer.data).to("./temp/converted.pdf", async function () {
-                            app.client.files.upload({
-                                token: process.env.SLACK_BOT_TOKEN,
-                                thread_ts: message.ts,
-                                file: fs.readFileSync('./temp/converted.pdf'),
-                                //filename: slackFileName.substring(0, s.indexOf('.')) + '.pdf',
-                                //filetype: 'pdf',
-                            });
-                            console.log(`Converted ${slackFileName} successfully!`);
-                            //fs.unlink('./temp/converted.pdf');
-                        });
-                    }).catch((err) => {
-                        console.log(err);
-                    });
-                }
-            })
-            .catch((err) => {
-                console.log(err);
-                app.client.chat.postMessage({
-                    token: process.env.SLACK_BOT_TOKEN,
-                    channel: message.channel,
-                    thread_ts: message.ts,
-                    text: 'Failed to make yo\' file public. ERR: `' + err.data.error + '` now keep moving :car:, keep moving I said!',
-                    username: 'the construction workers on i-10',
-                    icon_emoji: ':cyclone:',
-                });
-            });
-    } // Delete all other messages
-    else {
+    } else {
         if (typeof message.thread_ts === 'undefined') {
             await app.client.chat.delete({
                 token: process.env.SLACK_TOKEN,
