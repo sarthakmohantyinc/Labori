@@ -486,9 +486,9 @@ app.message(/.*/, async ({
                             });
                             console.log(`Converted ${slackFileName} successfully!`);
                             //fs.unlink('./temp/converted.pdf');
-                        }).catch((err) => {
-                            console.log(err);
                         });
+                    }).catch((err) => {
+                        console.log(err);
                     });
                 }
             })
