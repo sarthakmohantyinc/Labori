@@ -474,10 +474,9 @@ app.message(/.*/, async ({
                     axios.get(pubLink, {
                         responseType: 'arraybuffer'
                     }).then((buffer) => {
-                        console.log(Buffer.from(buffer));
                         markdownpdf({
                             cssPath: "https://stackedit.io/style.css"
-                        }).from(Buffer.from(buffer.data)).to("./temp/converted.pdf", async function () {
+                        }).from(buffer.data).to("./temp/converted.pdf", async function () {
                             app.client.files.upload({
                                 token: process.env.SLACK_BOT_TOKEN,
                                 thread_ts: message.ts,
