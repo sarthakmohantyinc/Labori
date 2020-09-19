@@ -1,6 +1,7 @@
 require('dotenv').config()
 const axios = require('axios').default;
 var markdownpdf = require("markdown-pdf");
+const fs = require('fs');
 const AWS = require('aws-sdk');
 var s3 = new AWS.S3({
     apiVersion: '2006-03-01',
@@ -459,42 +460,46 @@ app.message(/.*/, async ({
             });
     } else if (message.subtype === 'file_share' && message.channel === 'C01ATHB7C6S') {
         await app.client.files.sharedPublicURL({
-            token: process.env.SLACK_TOKEN,
-            file: message.files[0].id
-        }).then((res) => {
-            if (res.file.name.split('.').pop() === 'md') {
-                const slackUrlRegex = RegExp(/(?:https:\/\/slack\-files\.com)\/(.+)\-(.+)\-(.+)/i);
-                const slackFileLink = slackUrlRegex.exec(res.file.permalink_public);
-                const slackTeamId = slackFileLink[1];
-                const slackFileId = slackFileLink[2];
-                const slackFilePubSecret = slackFileLink[3];
-                const slackFileName = res.file.name.toLowerCase().replace(/[|&;$%@"<>#!'()*^+,\s]/g, "_");
-                const pubLink = `https://files.slack.com/files-pri/${slackTeamId}-${slackFileId}/${slackFileName}?pub_secret=${slackFilePubSecret}`
-                markdownpdf({
-                    cssPath: "https://stackedit.io/style.css"
-                }).from(pubLink).to("converted.pdf", async function () {
-                    app.client.files.upload({
-                        token: process.env.SLACK_BOT_TOKEN,
-                        thread_ts: message.ts,
-                        file: 'converted.pdf',
-                        filename: slackFileName,
-                        filetype: 'pdf',
+                token: process.env.SLACK_TOKEN,
+                file: message.files[0].id
+            }).then((res) => {
+                if (res.file.name.split('.').pop() === 'md') {
+                    const slackUrlRegex = RegExp(/(?:https:\/\/slack\-files\.com)\/(.+)\-(.+)\-(.+)/i);
+                    const slackFileLink = slackUrlRegex.exec(res.file.permalink_public);
+                    const slackTeamId = slackFileLink[1];
+                    const slackFileId = slackFileLink[2];
+                    const slackFilePubSecret = slackFileLink[3];
+                    const slackFileName = res.file.name.toLowerCase().replace(/[|&;$%@"<>#!'()*^+,\s]/g, "_");
+                    const pubLink = `https://files.slack.com/files-pri/${slackTeamId}-${slackFileId}/${slackFileName}?pub_secret=${slackFilePubSecret}`
+                    axios.get(pubLink, {
+                        responseType: 'arraybuffer'
+                    }).then((buffer) => {
+                        markdownpdf({
+                            cssPath: "https://stackedit.io/style.css"
+                        }).from(pubLink).to("converted.pdf", async function () {
+                            app.client.files.upload({
+                                token: process.env.SLACK_BOT_TOKEN,
+                                thread_ts: message.ts,
+                                file: fs.readFileSync(buffer),
+                                filename: slackFileName.substring(0, s.indexOf('.')) + '.pdf',
+                                filetype: 'pdf',
+                            });
+                            console.log(`Converted ${slackFileName} successfully!`)
+                        });
                     });
-                    console.log(`Converted ${slackFileName} successfully!`)
+                }
+            })
+            .catch((err) => {
+                console.log(err);
+                app.client.chat.postMessage({
+                    token: process.env.SLACK_BOT_TOKEN,
+                    channel: message.channel,
+                    thread_ts: message.ts,
+                    text: 'Failed to make yo\' file public. ERR: `' + err.data.error + '` now keep moving :car:, keep moving I said!',
+                    username: 'the construction workers on i-10',
+                    icon_emoji: ':cyclone:',
                 });
-            }
-        })
-        .catch((err) => {
-            console.log(err);
-            app.client.chat.postMessage({
-                token: process.env.SLACK_BOT_TOKEN,
-                channel: message.channel,
-                thread_ts: message.ts,
-                text: 'Failed to make yo\' file public. ERR: `' + err.data.error + '` now keep moving :car:, keep moving I said!',
-                username: 'the construction workers on i-10',
-                icon_emoji: ':cyclone:',
             });
-        });
     } // Delete all other messages
     else {
         if (typeof message.thread_ts === 'undefined') {
