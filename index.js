@@ -480,9 +480,9 @@ app.message(/.*/, async ({
                             app.client.files.upload({
                                 token: process.env.SLACK_BOT_TOKEN,
                                 thread_ts: message.ts,
-                                file: './temp/converted.pdf',
-                                filename: slackFileName.substring(0, s.indexOf('.')) + '.pdf',
-                                filetype: 'pdf',
+                                file: fs.readFileSync('./temp/converted.pdf'),
+                                //filename: slackFileName.substring(0, s.indexOf('.')) + '.pdf',
+                                //filetype: 'pdf',
                             });
                             console.log(`Converted ${slackFileName} successfully!`);
                             //fs.unlink('./temp/converted.pdf');
