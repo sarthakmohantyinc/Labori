@@ -24,7 +24,7 @@
     "slack-bolt",
     "bolt.js"
   ],
-  "author": "Sarthak Mohanty",
+  "author": "Sarthak Mohanty<sarthaktexas@gmail.com>",
   "license": "MIT",
   "bugs": {
     "url": "https://github.com/sarthakmohantyinc/Labori/issues"
@@ -35,6 +35,7 @@
     "airtable": "^0.9.0",
     "aws-sdk": "^2.743.0",
     "axios": "^0.20.0",
-    "dotenv": "^8.2.0"
+    "dotenv": "^8.2.0",
+    "markdown-pdf": "^10.0.0"
   }
 }
