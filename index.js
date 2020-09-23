@@ -141,7 +141,14 @@ app.message(/.*/, async ({
                         }, function (err, record) {
                             if (err) {
                                 console.error(err);
-                                return;
+                                app.client.chat.postMessage({
+                                    token: process.env.SLACK_BOT_TOKEN,
+                                    channel: message.channel,
+                                    thread_ts: message.ts,
+                                    text: 'airtable fun failing. looks like `' + err.error + ': ' + err.message + '` which probably means <@U015MNHKTMX> made a mistake. <@U015MNHKTMX> fix this. :wind_blowing_face:.',
+                                    username: 'the cold cold texas weather that\'s coming',
+                                    icon_emoji: ':wind_blowing_face:',
+                                });
                             }
                         });
                     }).catch((err) => {
