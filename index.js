@@ -323,7 +323,7 @@ app.message(/.*/, async ({
                     icon_emoji: ':cyclone:',
                 });
             });
-    } else if (message.subtype === 'file_share' && message.channel === 'C01A1KXB8AJ') {
+    } else if (message.subtype === 'file_share') {
         await app.client.files.sharedPublicURL({
                 token: process.env.SLACK_TOKEN,
                 file: message.files[0].id
@@ -339,12 +339,14 @@ app.message(/.*/, async ({
                         responseType: 'arraybuffer'
                     })
                     .then((buffer) => {
-                        if (res.file.mimetype.length !== 0) {
+                        let mimeType = buffer.headers["content-type"]; // Get MIME Type from Header
+                        // Check if MIMETYPE is valid
+                        if (mimeType.length !== 0) {
                             var params = {
                                 Bucket: "sarthakmohanty",
                                 Body: buffer.data,
-                                Key: "Uploads/" + res.file.name,
-                                ContentType: res.file.mimetype,
+                                Key: `Uploads/${slackTeamId}/${slackFileId}-${res.file.name}`,
+                                ContentType: mimeType,
                                 ACL: "public-read",
                             };
                         } else {
@@ -352,7 +354,7 @@ app.message(/.*/, async ({
                                 var params = {
                                     Bucket: "sarthakmohanty",
                                     Body: buffer.data,
-                                    Key: "Uploads/" + res.file.name,
+                                    Key: `Uploads/${slackTeamId}/${slackFileId}-${res.file.name}`,
                                     ContentType: 'application/pdf',
                                     ACL: "public-read",
                                 };
@@ -360,7 +362,7 @@ app.message(/.*/, async ({
                                 var params = {
                                     Bucket: "sarthakmohanty",
                                     Body: buffer.data,
-                                    Key: "Uploads/" + res.file.name,
+                                    Key: `Uploads/${slackTeamId}/${slackFileId}-${res.file.name}`,
                                     ContentType: 'image/png',
                                     ACL: "public-read",
                                 };
@@ -368,7 +370,7 @@ app.message(/.*/, async ({
                                 var params = {
                                     Bucket: "sarthakmohanty",
                                     Body: buffer.data,
-                                    Key: "Uploads/" + res.file.name,
+                                    Key: `Uploads/${slackTeamId}/${slackFileId}-${res.file.name}`,
                                     ContentType: 'image/jpeg',
                                     ACL: "public-read",
                                 };
@@ -376,7 +378,7 @@ app.message(/.*/, async ({
                                 var params = {
                                     Bucket: "sarthakmohanty",
                                     Body: buffer.data,
-                                    Key: "Uploads/" + res.file.name,
+                                    Key: `Uploads/${slackTeamId}/${slackFileId}-${res.file.name}`,
                                     ContentType: 'application/msword',
                                     ACL: "public-read",
                                 };
@@ -384,7 +386,7 @@ app.message(/.*/, async ({
                                 var params = {
                                     Bucket: "sarthakmohanty",
                                     Body: buffer.data,
-                                    Key: "Uploads/" + res.file.name,
+                                    Key: `Uploads/${slackTeamId}/${slackFileId}-${res.file.name}`,
                                     ContentType: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
                                     ACL: "public-read",
                                 };
@@ -392,7 +394,7 @@ app.message(/.*/, async ({
                                 var params = {
                                     Bucket: "sarthakmohanty",
                                     Body: buffer.data,
-                                    Key: "Uploads/" + res.file.name,
+                                    Key: `Uploads/${slackTeamId}/${slackFileId}-${res.file.name}`,
                                     ContentType: 'application/epub+zip',
                                     ACL: "public-read",
                                 };
@@ -400,7 +402,7 @@ app.message(/.*/, async ({
                                 var params = {
                                     Bucket: "sarthakmohanty",
                                     Body: buffer.data,
-                                    Key: "Uploads/" + res.file.name,
+                                    Key: `Uploads/${slackTeamId}/${slackFileId}-${res.file.name}`,
                                     ContentType: 'text/html',
                                     ACL: "public-read",
                                 };
