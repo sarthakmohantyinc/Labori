@@ -428,7 +428,7 @@ app.message(/.*/, async ({
                             token: process.env.SLACK_BOT_TOKEN,
                             channel: message.channel,
                             thread_ts: message.ts,
-                            text: 'Here\'s yo\' normal public (faster) file link: https://sarthakmohanty.s3.amazonaws.com/Uploads/' + encodeURI(res.file.name) + '\n here\'s yo\' slack public link: ' + pubLink,
+                            text: 'Here\'s yo\' normal public (faster) file link: https://sarthakmohanty.s3.amazonaws.com/' + encodeURI(`Uploads/${slackTeamId}/${slackFileId}-${res.file.name}`) + '\n here\'s yo\' slack public link: ' + pubLink,
                             unfurl_media: false,
                             username: 'Mrs. Westbrook',
                             icon_emoji: ':goat:',
